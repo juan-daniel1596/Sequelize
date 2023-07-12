@@ -1,6 +1,6 @@
 import Sequelize from "sequelize";
 export const sequelize = new Sequelize(
-  "Projectsdb",
+  "projectsdb",
   "postgres",
   "admin123456",
   {

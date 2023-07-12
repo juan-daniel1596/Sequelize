@@ -1,21 +1,17 @@
 import app from './app.js'
 import {sequelize} from './database/database.js'
-import './models/Project.js'
-import './models/Task.js'
 
-const PORT = 4000;
 
-async function main (){
-    try{
-        await sequelize.authenticate();
-        // await sequelize.sync({force: false});
-        app.listen(PORT);
-        console.log('SERVIDOR LEVANTADO EN EL PUERTO', PORT)
+async function main() {
+    try {
+        // await sequelize.authenticate();
+        // await sequelize.sync({ force: false});
+        app.listen(4000)
+        console.log('server is listening on port', 400)
     }
-    catch (error){
-        console.error("unable to connect to the database: " , error);
-     
+    catch (error) {
+        console.error("unable to connect to the database: ", error);
+
     }
 }
-
 main()

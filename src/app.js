@@ -1,12 +1,12 @@
-import express from  'express'
+import express from 'express';
 import projectsRoutes from './routes/projects.routes.js'
-import morgan from 'morgan';
-
+import tasksRoutes from './routes/tasks.routes.js'
 const app = express();
+//middlewres
+app.use(express.json());
 
 
-app.use(morgan('dev'));
-app.use(express.json);
 app.use(projectsRoutes);
+app.use(tasksRoutes);
 
 export default app;
