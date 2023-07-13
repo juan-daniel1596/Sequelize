@@ -1,5 +1,7 @@
+import { sequelize } from '../database/database.js';
 import { Projects } from '../models/Projects.js';
 import { Task } from '../models/Task.js';
+
 
 
 export const getProjects = async (req, res) => {
@@ -13,9 +15,9 @@ export const getProjects = async (req, res) => {
     }
 }
 export const getProject = async (req, res) => {
-     const { id } = req.params;
+    const { id } = req.params;
     try {
-       
+
         const projects = await Projects.findOne({
             where: {
                 id
@@ -37,6 +39,7 @@ export const createProject = async (req, res) => {
             name,
             description,
             priority,
+            
 
         });
         res.json(newProject)
@@ -79,25 +82,72 @@ export const deleteProject = async (req, res) => {
     }
 }
 
-export const getProyectTask = async(req,res) =>{
-const {id} = req.params;
-const task = await Task.findAll({
-    where: {projectId : id}
-    
-            
+export const getProyectTask = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const project = await Projects.findByPk(id,{
+            include: [
+                { 
+                    model: Task,
+                }
+            ]
+        })
 
-});
-res.json(task);
+        res.json(project);
+
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
 
 }
 
-// const { id } = req.params;
-//   try {
-//     const tasks = await Task.findAll({
-//       attributes: ["id", "projectId", "name", "done"],
-//       where: { projectId: id },
-//     });
-//     res.json(tasks);
-//   } catch (e) {
-//     return res.status(500).json({ message: e.message });
-//   }
+export const deleteProjectsTasks = async (req, res) => {
+    const { id } = req.params;
+    const transaction = await sequelize.transaction();
+    try {
+
+        await Task.destroy({
+            where: {
+                ProjectId:   id
+            },
+            transaction: transaction
+        });
+
+        await Projects.destroy({
+            where: {
+                id
+            },
+            transaction: transaction
+        });
+        await transaction.commit();
+        res.sendStatus(204);
+
+    } catch (error) {
+        await transaction.rollback();
+        return res.status(500).json({ message: error.message })
+    }
+};
+
+export const createProyectsTasks = async(req, res) => {
+    const { name, priority, description} = req.body
+    try {
+        const newProject = await Projects.create({
+            name,
+            description,
+            priority,
+            },
+            {
+                include:Task
+            }
+            );
+        res.json(newProject)
+    } catch (error) {
+        return res.status(500).json({ message: error.message })
+    }
+    
+   
+  
+
+    
+
+}
