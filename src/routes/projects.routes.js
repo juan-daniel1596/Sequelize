@@ -17,6 +17,6 @@ router.get("/projects/:id/tasks", getProyectTask)
 //elimnar projectos con sus tareas
 router.delete("/projects/:id/tasks", deleteProjectsTasks)
 //creating Proyects and tasks
-router.delete("/projects/tasks", createProyectsTasks)
+router.post("/projects/tasks", createProyectsTasks)
 
 export default router;

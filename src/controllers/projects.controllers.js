@@ -34,12 +34,13 @@ export const getProject = async (req, res) => {
 export const createProject = async (req, res) => {
 
     const { name, priority, description } = req.body
+
     try {
         const newProject = await Projects.create({
             name,
             description,
             priority,
-            
+
 
         });
         res.json(newProject)
@@ -85,9 +86,9 @@ export const deleteProject = async (req, res) => {
 export const getProyectTask = async (req, res) => {
     const { id } = req.params;
     try {
-        const project = await Projects.findByPk(id,{
+        const project = await Projects.findByPk(id, {
             include: [
-                { 
+                {
                     model: Task,
                 }
             ]
@@ -108,7 +109,7 @@ export const deleteProjectsTasks = async (req, res) => {
 
         await Task.destroy({
             where: {
-                ProjectId:   id
+                ProjectId: id
             },
             transaction: transaction
         });
@@ -128,26 +129,21 @@ export const deleteProjectsTasks = async (req, res) => {
     }
 };
 
-export const createProyectsTasks = async(req, res) => {
-    const { name, priority, description} = req.body
+export const createProyectsTasks = async (req, res) => {
     try {
-        const newProject = await Projects.create({
-            name,
-            description,
-            priority,
-            },
+        // const { name, priority, description, tasks } = req.body;
+        const project = await Projects.create(
+            req.body,
             {
-                include:Task
+                include: Task
             }
-            );
-        res.json(newProject)
-    } catch (error) {
-        return res.status(500).json({ message: error.message })
-    }
-    
-   
-  
+        );
+        res.json(project);
 
-    
+    } catch (error) {
+        console.error('Error al crear el proyecto y las tareas:', error);
+        res.status(500).json({ error: 'Ocurrió un error al crear el proyecto y las tareas' });
+
+    }
 
 }
